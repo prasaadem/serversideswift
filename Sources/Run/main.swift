@@ -1,4 +1,5 @@
 import App
+import Vapor
 
 /// We have isolated all of our App's logic into
 /// the App module because it makes our app
@@ -16,10 +17,26 @@ import App
 ///
 /// .run() runs the Droplet's commands, 
 /// if no command is given, it will default to "serve"
+
 let config = try Config()
 try config.setup()
 
 let drop = try Droplet(config)
 try drop.setup()
+
+drop.get("/") { request in
+    return "Hello World!"
+}
+
+drop.get("/name",":name") { request in
+    if let name = request.parameters["name"]?.string {
+        return "Hello \(name)!"
+    }
+    return "Error retrieving parameters."
+}
+
+// drop.get("/view") { request in
+//     return try drop.view("view.html")
+// }
 
 try drop.run()
